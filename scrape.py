@@ -23,9 +23,6 @@ validdir = os.path.isdir(directory)
 if validdir is False:
     print("Invalid directory. Enter a valid directory.")
 
-while option not in ['worm','pact','twig']:
-    print("I'm not familiar with that particular web series. Current support is for worm, pact, and twig.\n")
-    print("Please specify one of the works that are supported or use Ctrl + c to terminate.\n")
 # Turn all inputs to lower case.
     option = input().lower()
 # Runs the prerequisite python file which builds the sitemap.
@@ -62,37 +59,41 @@ file = open(directory + "/" + option + ".html","w",encoding="utf-8")
 # Run scraper for every entry in the dictionary.
 for url in ScraperURL:
     SourceURL = url
-
-# Open the url and read the source.
+    if len(SourceURL) == 0:
+        continue
+    # Prints current URL being scraped for debugging convenience.
+    print("Starting "+ SourceURL +"\n")
+    # Open the url and read the source.
     source = urllib.request.urlopen(SourceURL).read()
+    # Prints current URL being scraped for debugging convenience.
+    print("// parsing "+ SourceURL +"\n")
     soup = bs.BeautifulSoup(source,'lxml')
 
-# Prints current URL being scraped for debugging convenience.
-    print("Starting "+ SourceURL +"\n")
-
-
-###   Calibre detects titles and chapters inside h1 or h2 tags if they belong to the "chapter" class.
-###   This ensures that caibre generates a page break during conversion.
-
+    ###   Calibre detects titles and chapters inside h1 or h2 tags if they belong to the "chapter" class.
+    ###   This ensures that caibre generates a page break during conversion.
     file.write("<h2 class=\"chapter\">" + soup.title.text + "</h2>")
     file.write("</br></br>")
 
-# For every single p tag, the text within is scraped and added to the current output file.
-    for paragraph in soup.find_all('p'):
-# Some p tags are used in the source site for paragraph breaks. Ignores those.
-        if(paragraph.string!=None and paragraph.string):
-# Writes the text to output file.
-            paragh = (paragraph.string)
-# Avoiding a few words by making sure they're not the current string extracted.
-            listtoavoid = ["Next Chapter","Connecting to %s","<strike>","Fill in your details below"]
+    # For every single p tag, the text within is scraped and added to the current output file.
+    holders = soup.find_all('div', class_='entry-content')
+    for hld in holders:
+        print("// entry-content found")
+        for paragraph in hld.find_all('p'):
+    # Some p tags are used in the source site for paragraph breaks. Ignores those.
+            paragh = paragraph.get_text().strip()
+            print("- p", paragh)
+            if len(paragh) == 0:
+                continue
+            # Writes the text to output file.
+            # Avoiding a few words by making sure they're not the current string extracted.
+            listtoavoid = ["Next Chapter","Previous Chapter","Connecting to %s","<strike>","Fill in your details below"]
             if any(lta in paragh for lta in listtoavoid):
-                print("Avoiding word.")
+                print("// skipping navigation")
             else:
                 file.write("<p>" + paragh + "</p>")
-        else:
-            continue
-#End of chapter shows in console output for user convenience.
-    print("Done with Chapter\n")
+
+    # End of chapter shows in console output for user convenience.
+    print("Done with Chapter "+SourceURL+"\n")
 print("All done with " + option + ". Use Calibre to convert into preferred format. :]\n")
 print("Removing sitemap files now.")
 os.system("rm " + option + "-sitemap.txt")
