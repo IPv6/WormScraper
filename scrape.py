@@ -87,7 +87,7 @@ for url in ScraperURL:
             print("- p", paragh)
             # Writes the text to output file.
             # Avoiding a few words by making sure they're not the current string extracted.
-            listtoavoid = ["Next Chapter","Previous Chapter","Connecting to %s","<strike>","Fill in your details below"]
+            listtoavoid = ["Next Chapter","Previous Chapter","Next Epilogue","Previous Epilogue","Connecting to %s","<strike>","Fill in your details below"]
             if any(lta in paragh for lta in listtoavoid):
                 print("// skipping navigation")
             else:
