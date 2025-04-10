@@ -72,8 +72,9 @@ for url in ScraperURL:
 
     ###   Calibre detects titles and chapters inside h1 or h2 tags if they belong to the "chapter" class.
     ###   This ensures that caibre generates a page break during conversion.
-    file.write("<h2 class=\"chapter\">" + soup.title.text + "</h2>")
     file.write("<br/><br/>")
+    file.write("<h2 class=\"chapter\">" + soup.title.text + "</h2>")
+    file.write("<br/>")
 
     # For every single p tag, the text within is scraped and added to the current output file.
     holders = soup.find_all('div', class_='entry-content')
