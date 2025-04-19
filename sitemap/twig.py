@@ -17,12 +17,13 @@ dictionary = {}
 i = 0
 
 # Opens the output sitemap file.
-if(os.path.isfile("twig-sitemap.txt")):
+sm_file = sys.argv[1]
+if(os.path.isfile(sm_file)):
     print("Sitemap already exists, either from a previous scrape, or user has generated a custom sitemap.\n")
     print("Not generating sitemap.\n")
     sys.exit(0)
 else:
-    file = open("twig-sitemap.txt","w")
+    file = open(sm_file,"w")
     print("File opened\n")
 
 # Finds every url in the sitemap that hold 2014/15/16/17/18 since that's the naming convention followed,
