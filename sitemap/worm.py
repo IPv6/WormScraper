@@ -14,12 +14,13 @@ soup = bs.BeautifulSoup(source,'lxml')
 
 # Opens a text file and writes all required URL's into it.
 # If the sitemap already exists, the script simply exits without an error.
-if(os.path.isfile("worm-sitemap.txt")):
+sm_file = sys.argv[1]
+if(os.path.isfile(sm_file)):
     print("Sitemap already exists, either from a previous scrape, or a custom sitemap.")
     print("Not generating sitemap.")
     sys.exit(0)
 else:
-    file = open("worm-sitemap.txt","w")
+    file = open(sm_file,"w")
     print("File opened\n")
 
 # Finds all anchor tags and gets the links they point to.
